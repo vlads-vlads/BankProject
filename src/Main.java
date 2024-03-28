@@ -86,14 +86,14 @@ public class Main {
                 }
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a valid option.");
-                scanner.nextLine(); // Consume the invalid input
+                scanner.nextLine();
             }
         }
     }
 
     private static void transfer(BankAccount senderAccount, int recipientId, double amount, List<BankAccount> accounts, BankAccount userAccount) {
         BankAccount recipientAccount = findAccountById(recipientId, accounts);
-        if (recipientAccount != null && senderAccount != null && senderAccount.getId() != userAccount.getId()) {
+        if (recipientAccount != null && senderAccount != null && recipientAccount.getId() != userAccount.getId()) {
             senderAccount.transfer(recipientAccount, amount);
         } else {
             System.out.println("Sender or recipient account not found.");
@@ -106,7 +106,11 @@ public class Main {
 
         System.out.print("How much money do you want to deposit? ");
         double initialBalance = scanner.nextDouble();
-        return new BankAccount(accountId, initialBalance);
+        BankAccount newAccount =  new BankAccount(accountId, initialBalance);
+        newAccount.serialize("./Accounts_rep");
+        String transactionDetails = "New account is created with ID : " + newAccount.getId() + " | Balance $" + newAccount.getBalance();
+        newAccount.writeTransactionToFile(transactionDetails);
+        return newAccount;
     }
 
     private static boolean checkAccountById(int id, List<BankAccount> accounts) {
