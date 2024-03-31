@@ -32,7 +32,7 @@ public class Bank {
     public boolean addNewCustomer(int id, double deposit) {
         if (!checkAccountById(id)) {
             BankAccount customer = new BankAccount(id, deposit);
-            customers.add(customer);git 
+            customers.add(customer);
             currentUser = customer;
             customer.serialize("./Accounts_rep");
             String transactionDetails = "New account is created with ID : " + customer.getId() + " | Balance $" + customer.getBalance();

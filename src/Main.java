@@ -54,7 +54,8 @@ public class Main {
             System.out.println("2. Withdraw");
             System.out.println("3. Transfer");
             System.out.println("4. Print Balance");
-            System.out.println("5. Exit");
+            System.out.println("5. Print History");
+            System.out.println("6. Exit");
             System.out.print("Enter your choice: ");
             try {
                 int choice = scanner.nextInt();
@@ -81,6 +82,9 @@ public class Main {
                         bank.currentUser.printBalance();
                         break;
                     case 5:
+                        bank.currentUser.displayTransactionHistory();
+                        break;
+                    case 6:
                         System.out.println("Exiting...");
                         System.exit(0);
                     default:
