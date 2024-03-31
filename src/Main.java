@@ -1,16 +1,16 @@
-import java.util.ArrayList;
 import java.util.InputMismatchException;
-import java.util.List;
 import java.util.Scanner;
 
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
+        Bank bank = new Bank();
+        bank.addNewCustomer(1, 100);
+        bank.addNewCustomer(2, 900);
+        bank.addNewCustomer(3, 750);
+        bank.addNewCustomer(4, 300);
 
-        List<BankAccount> accounts = new ArrayList<>();
-        accounts.add(new BankAccount(1001, 500.00));
-        accounts.add(new BankAccount(1002, 1000.00));
-        BankAccount userAccount = null;
+
         boolean connected = true;
 
         while (connected) {
@@ -23,18 +23,20 @@ public class Main {
 
                 switch (answer) {
                     case 1:
-                        userAccount = createAccount(scanner);
-                        accounts.add(userAccount);
-                        connected = false;
+                        System.out.print("Enter your account ID: ");
+                        int accountId = scanner.nextInt();
+                        System.out.print("How much money do you want to deposit? ");
+                        double initialBalance = scanner.nextDouble();
+
+                        if (bank.addNewCustomer(accountId, initialBalance)) {
+                            connected = false;
+                        }
                         break;
                     case 2:
                         System.out.print("Enter your account ID: ");
-                        int accountId = scanner.nextInt();
-                        if (checkAccountById(accountId, accounts)) {
-                            userAccount = findAccountById(accountId, accounts);
+                        int accId = scanner.nextInt();
+                        if (bank.logIn(accId)) {
                             connected = false;
-                        } else {
-                            System.out.println("Wrong credentials");
                         }
                         break;
                     default:
@@ -61,22 +63,22 @@ public class Main {
                     case 1:
                         System.out.print("Enter amount to deposit: ");
                         double depositAmount = scanner.nextDouble();
-                        userAccount.deposit(depositAmount);
+                        bank.currentUser.deposit(depositAmount);
                         break;
                     case 2:
                         System.out.print("Enter amount to withdraw: ");
                         double withdrawAmount = scanner.nextDouble();
-                        userAccount.withdraw(withdrawAmount);
+                        bank.currentUser.withdraw(withdrawAmount);
                         break;
                     case 3:
                         System.out.print("Enter recipient's account ID: ");
                         int recipientId = scanner.nextInt();
                         System.out.print("Enter amount to transfer: ");
                         double transferAmount = scanner.nextDouble();
-                        transfer(userAccount, recipientId, transferAmount, accounts, userAccount);
+                        bank.transfer(recipientId, transferAmount);
                         break;
                     case 4:
-                        userAccount.printBalance();
+                        bank.currentUser.printBalance();
                         break;
                     case 5:
                         System.out.println("Exiting...");
@@ -91,44 +93,5 @@ public class Main {
         }
     }
 
-    private static void transfer(BankAccount senderAccount, int recipientId, double amount, List<BankAccount> accounts, BankAccount userAccount) {
-        BankAccount recipientAccount = findAccountById(recipientId, accounts);
-        if (recipientAccount != null && senderAccount != null && recipientAccount.getId() != userAccount.getId()) {
-            senderAccount.transfer(recipientAccount, amount);
-        } else {
-            System.out.println("Sender or recipient account not found.");
-        }
-    }
-
-    private static BankAccount createAccount(Scanner scanner) {
-        System.out.print("Enter your account ID: ");
-        int accountId = scanner.nextInt();
-
-        System.out.print("How much money do you want to deposit? ");
-        double initialBalance = scanner.nextDouble();
-        BankAccount newAccount =  new BankAccount(accountId, initialBalance);
-        newAccount.serialize("./Accounts_rep");
-        String transactionDetails = "New account is created with ID : " + newAccount.getId() + " | Balance $" + newAccount.getBalance();
-        newAccount.writeTransactionToFile(transactionDetails);
-        return newAccount;
-    }
-
-    private static boolean checkAccountById(int id, List<BankAccount> accounts) {
-        for (BankAccount account : accounts) {
-            if (account.getId() == id) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    private static BankAccount findAccountById(int id, List<BankAccount> accounts) {
-        for (BankAccount account : accounts) {
-            if (account.getId() == id) {
-                return account;
-            }
-        }
-        return null;
-    }
 }
 
